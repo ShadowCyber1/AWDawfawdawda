@@ -22,7 +22,7 @@ module.exports.run = async function({ api, event, args }) {
         api.setMessageReaction("🔍", event.messageID, (err) => {}, true);
         api.sendMessage("🔍AI is searching for an answer, please wait...", threadID, messageID);
 
-        const res = await axios.get(`http://api.brainshop.ai/get?bid=182408&key=dUldnqDMj19OSgC1&uid=${encodeURIComponent(senderID)}&msg=${encodeURIComponent(content)}`);
+        const res = await axios.get(`http://172.81.128.14:20826/api/gpt?prompt=${encodeURIComponent(senderID)}&msg=${encodeURIComponent(content)}`);
 
         // Log the entire response to inspect its structure
         console.log("Full response:", JSON.stringify(res.data, null, 2));
