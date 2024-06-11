@@ -23,9 +23,9 @@
   "commandDisabled": [],
   "eventDisabled": [],
   "BOTNAME": "Bot",
-  "PREFIX": "?",
+  "PREFIX": ".",
   "ADMINBOT": [
-    "YOUR_FB_UID",
+    "61553917146801",
     "OTHER_FB_UID"
   ],
   "DESIGN": {
