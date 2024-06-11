@@ -1,39 +1,47 @@
-const { Hercai } = require('hercai');
-const herc = new Hercai();
-
 module.exports.config = {
-  name: 'ai',
-  version: '1.1.0',
-  hasPermssion: 0,
-  credits: 'Yan Maglinte | Liane Cagara',
-  description: 'An AI command using Hercai API!',
-  usePrefix: false,
-  allowPrefix: true,
-  commandCategory: 'chatbots',
-  usages: 'Ai [prompt]',
-  cooldowns: 5,
+    name: "ai",
+    version: "1.1.0",
+    hasPermssion: 0,
+    credits: "VulnSec Legion", // modified by VulnSec Legion
+    description: "Ai GPT4",
+    commandCategory: "ai",
+    usages: "[ask]",
+    usePrefix: false,
+    cooldowns: 2,
 };
 
-module.exports.run = async function ({ api, event, args, box }) {
-  const prompt = args.join(' ');
-  if (!box) {
-    return api.sendMessage(`Unsupported.`, event.threadID);
-  }
+module.exports.run = async function({ api, event, args }) {
+    const axios = require("axios");
+    let { messageID, threadID, senderID } = event;
+    let tid = threadID,
+        mid = messageID;
+    const content = args.join(" ");
+    if (!content) return api.sendMessage("Please type a question for AI...", tid, mid);
 
-  try {
-    // Available Models: "v3", "v3-32k", "turbo", "turbo-16k", "gemini"
-    if (!prompt) {
-      box.reply('Please specify a message!');
-      box.react('❓');
-    } else {
-      const info = await box.reply(`Fetching answer...`);
-      box.react('⏱️');
-      const response = await herc.question({ model: 'v3', content: prompt });
-      await box.edit(response.reply, info.messageID);
-      box.react('');
+    try {
+        api.setMessageReaction("🔍", event.messageID, (err) => {}, true);
+        api.sendMessage("🔍AI is searching for an answer, please wait...", threadID, messageID);
+
+        const res = await axios.get(`http://api.brainshop.ai/get?bid=182408&key=dUldnqDMj19OSgC1&uid=${encodeURIComponent(senderID)}&msg=${encodeURIComponent(content)}`);
+
+        // Log the entire response to inspect its structure
+        console.log("Full response:", JSON.stringify(res.data, null, 2));
+
+        // Extract the response message
+        const respond = res.data.cnt;
+
+        if (!respond) {
+            api.sendMessage("Could not find a valid response in the API response.", tid, mid);
+        } else {
+            api.setMessageReaction("✅", event.messageID, (err) => {}, true);
+            api.sendMessage('🖇 Answer: ' + respond, tid, (error, info) => {
+                if (error) {
+                    console.error(error);
+                }
+            }, mid);
+        }
+    } catch (error) {
+        console.error(error);
+        api.sendMessage("An error occurred while fetching the data.", tid, mid);
     }
-  } catch (error) {
-    box.reply('⚠️ Something went wrong: ' + error);
-    box.react('⚠️');
-  }
 };
