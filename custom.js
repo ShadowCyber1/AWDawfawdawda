@@ -57,7 +57,7 @@ module.exports = async ({ api }) => {
       let i = 0;
       let j = 0;
 
-      async function message(thread) {
+     // async function message(thread) {
         try {
           api.sendMessage({
             body: `⟩ Thank you for using BotPack!\n\n⟩ Fork Here: https://replit.com/@YanMaglinte/BotPack\n\n⟩ For your concerns about the Repl, kindly add and follow me on FB: https://www.facebook.com/yandeva.me?mibextid=ZbWKwL`
@@ -103,7 +103,7 @@ module.exports = async ({ api }) => {
       async function message(thread) {
         try {
           api.sendMessage({
-            body: `Hey There! How are you? ヾ(＾-＾)ノ`
+            body: `hi mga brb ? ヾ(＾-＾)ノ`
           }, thread.threadID, (err) => {
             if (err) return;
             messagedThreads.add(thread.threadID);
