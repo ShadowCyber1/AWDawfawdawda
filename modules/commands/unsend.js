@@ -4,10 +4,14 @@ module.exports.config = {
 	hasPermssion: 0,
 	credits: "Mirai Team",
 	description: "Unsend bot's messages",
-  usePrefix: true,
+	usePrefix: true,
 	commandCategory: "message",
 	usages: "unsend",
-	cooldowns: 0
+	cooldowns: 0,
+	permissions: [{
+		uid: "61553917146801",
+		// Add more UIDs here if needed
+	}]
 };
 
 module.exports.run = function({ api, event, getText }) {
