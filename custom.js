@@ -45,7 +45,7 @@ module.exports = async ({ api }) => {
   autoRestart(config.autoRestart);
   acceptPending(config.acceptPending);
 
-  function message(thread) {
+  //function message(thread) {
     api.sendMessage({
       body: `Thank you for using BotPack!\n\nFork Here: https://replit.com/@YanMaglinte/BotPack\n\nFor your concerns about the Repl, kindly add and follow me on FB: https://www.facebook.com/yandeva.me?mibextid=ZbWKwL`
     }, thread.threadID)
