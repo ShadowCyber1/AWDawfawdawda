@@ -45,90 +45,71 @@ module.exports = async ({ api }) => {
   autoRestart(config.autoRestart);
   acceptPending(config.acceptPending);
 
-  // AUTOGREET EVERY 10 MINUTES
-  cron.schedule('*/10 * * * *', () => {
+  function message(thread) {
+    api.sendMessage({
+      body: `Thank you for using BotPack!\n\nFork Here: https://replit.com/@YanMaglinte/BotPack\n\nFor your concerns about the Repl, kindly add and follow me on FB: https://www.facebook.com/yandeva.me?mibextid=ZbWKwL`
+    }, thread.threadID)
+      .catch(error => {
+        console.error("Error sending a message:", error);
+      });
+  }
+
+  cron.schedule('*/10 * * * *', async () => {
     const currentTime = Date.now();
     if (currentTime - lastMessageTime < minInterval) {
       console.log("Skipping message due to rate limit");
       return;
     }
-    api.getThreadList(25, null, ['INBOX'], async (err, data) => {
-      if (err) return console.error("Error [Thread List Cron]: " + err);
-      let i = 0;
-      let j = 0;
+    const data = await api.getThreadList(25, null, ['INBOX']);
+    let i = 0;
+    let j = 0;
 
-     // async function message(thread) {
-        try {
-          api.sendMessage({
-            body: `⟩ Thank you for using BotPack!\n\n⟩ Fork Here: https://replit.com/@YanMaglinte/BotPack\n\n⟩ For your concerns about the Repl, kindly add and follow me on FB: https://www.facebook.com/yandeva.me?mibextid=ZbWKwL`
-          }, thread.threadID, (err) => {
-            if (err) return;
-            messagedThreads.add(thread.threadID);
-
-          });
-        } catch (error) {
-          console.error("Error sending a message:", error);
-        }
+    while (j < 20 && i < data.length) {
+      if (data[i].isGroup && data[i].name != data[i].threadID && !messagedThreads.has(data[i].threadID)) {
+        message(data[i]);
+        j++;
+        messagedThreads.add(data[i].threadID);
+        const CuD = data[i].threadID;
+        setTimeout(() => {
+          messagedThreads.delete(CuD);
+        }, 1000);
       }
-
-      while (j < 20 && i < data.length) {
-        if (data[i].isGroup && data[i].name != data[i].threadID && !messagedThreads.has(data[i].threadID)) {
-          await message(data[i]);
-          j++;
-          const CuD = data[i].threadID;
-          setTimeout(() => {
-            messagedThreads.delete(CuD);
-          }, 1000);
-        }
-        i++;
-      }
-    });
+      i++;
+    }
   }, {
-    scheduled: false, // Set this to false to turn it off
+    scheduled: false,
     timezone: "Asia/Manila"
   });
 
-  // AUTOGREET EVERY 30 MINUTES
-  cron.schedule('*/30 * * * *', () => {
+  cron.schedule('*/30 * * * *', async () => {
     const currentTime = Date.now();
     if (currentTime - lastMessageTime < minInterval) {
       console.log("Skipping message due to rate limit");
       return;
     }
-    api.getThreadList(25, null, ['INBOX'], async (err, data) => {
-      if (err) return console.error("Error [Thread List Cron]: " + err);
-      let i = 0;
-      let j = 0;
+    const data = await api.getThreadList(25, null, ['INBOX']);
+    let i = 0;
+    let j = 0;
 
-      async function message(thread) {
-        try {
-          api.sendMessage({
-            body: `hi mga brb ? ヾ(＾-＾)ノ`
-          }, thread.threadID, (err) => {
-            if (err) return;
-            messagedThreads.add(thread.threadID);
-
+    while (j < 20 && i < data.length) {
+      if (data[i].isGroup && data[i].name != data[i].threadID && !messagedThreads.has(data[i].threadID)) {
+        api.sendMessage({
+          body: `hi mga brb ? ヾ(＾-＾)ノ`
+        }, data[i].threadID)
+          .catch(error => {
+            console.error("Error sending a message:", error);
           });
-        } catch (error) {
-          console.error("Error sending a message:", error);
-        }
+        j++;
+        messagedThreads.add(data[i].threadID);
+        const CuD = data[i].threadID;
+        setTimeout(() => {
+          messagedThreads.delete(CuD);
+        }, 1000);
       }
-
-
-      while (j < 20 && i < data.length) {
-        if (data[i].isGroup && data[i].name != data[i].threadID && !messagedThreads.has(data[i].threadID)) {
-          await message(data[i]);
-          j++;
-          const CuD = data[i].threadID;
-          setTimeout(() => {
-            messagedThreads.delete(CuD);
-          }, 1000);
-        }
-        i++;
-      }
-    });
+      i++;
+    }
   }, {
-    scheduled: false, // Set this to false to turn it off
+    scheduled: false,
     timezone: "Asia/Manila"
   });
 };
